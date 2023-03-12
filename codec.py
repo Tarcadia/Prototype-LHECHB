@@ -1,4 +1,5 @@
 
+from random import randbytes
 from socket import socket
 from base64 import encodebytes
 from base64 import decodebytes
@@ -10,15 +11,18 @@ def recv(conn: socket):
     _lh = ord(conn.recv(1))
     _ll = ord(conn.recv(1))
     _len = _lh * 0xFF + _ll
+    assert _len % 16 == 0
     _recv = conn.recv(_len)
     while len(_recv) < _len:
         _recv += conn.recv(_len - len(_recv))
-    _recv = cryptos.decrypt(decodebytes(_recv))
+    _recv = cryptos.decrypt(_recv)
     return _recv
 
 def send(conn: socket, data: bytes):
-    _send = encodebytes(cryptos.encrypt(data))
-    assert len(_send) <= 0xFFFF
+    if len(data) % 16:
+        data += randbytes(16 - len(data) % 16)
+    _send = cryptos.encrypt(data)
+    assert len(_send) <= 0xFFFF and len(_send) % 16 == 0
     _len = len(_send).to_bytes(2, 'big')
     conn.send(_len + _send)
     return
