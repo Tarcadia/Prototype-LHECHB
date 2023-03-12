@@ -4,7 +4,7 @@ from base64 import encodebytes
 from base64 import decodebytes
 from Crypto.Cipher import AES
 
-cryptos = AES.new("JESAGFISBKUYDGWE", AES.MODE_ECB) ## HARD CODED FOR TEST ONLY!!!
+cryptos = AES.new(b"JESAGFISBKUYDGWE", AES.MODE_ECB) ## HARD CODED FOR TEST ONLY!!!
 
 def recv(conn: socket):
     _lh = conn.recv(1)
